@@ -64,6 +64,10 @@ typedef NS_ENUM(NSInteger, TOCropViewOverlayEdge) {
 @property (nonatomic, strong) id translucencyEffect;                /* The dark blur visual effect applied to the visual effect view. */
 @property (nonatomic, strong, readwrite) TOCropOverlayView *gridOverlayView;   /* A grid view overlaid on top of the foreground image view's container. */
 @property (nonatomic, strong) CAShapeLayer *circularMaskLayer;      /* Managing the clipping of the foreground container into a circle */
+/*项目需要，在裁剪框下面加提示文案*/
+@property (nonatomic, strong) UIImageView *tipImageView;
+@property (nonatomic, strong) UILabel *tipLabel;
+@property (nonatomic, strong) UIView *tipView;
 
 /* Gesture Recognizers */
 @property (nonatomic, strong) UIPanGestureRecognizer *gridPanGestureRecognizer; /* The gesture recognizer in charge of controlling the resizing of the crop view */
@@ -240,6 +244,21 @@ typedef NS_ENUM(NSInteger, TOCropViewOverlayEdge) {
     self.gridOverlayView.userInteractionEnabled = NO;
     self.gridOverlayView.gridHidden = YES;
     [self addSubview:self.gridOverlayView];
+    
+    self.tipView = [[UIView alloc] initWithFrame:CGRectZero];
+    
+    self.tipImageView = [[UIImageView alloc] initWithFrame:(CGRect){7.f, 2.f, 14.0f, 14.0f}];
+    self.tipImageView.image = [UIImage imageNamed:@"photo_select_tip_14x14"];
+    [self.tipView addSubview:self.tipImageView];
+    
+    self.tipLabel = [[UILabel alloc] initWithFrame:(CGRect){20.0f, 0.0, [UIScreen mainScreen].bounds.size.width - 40.0f, 34.0}];
+    self.tipLabel.textColor = [UIColor colorWithRed:234.f green:244.f blue:255.f alpha: 1.0];
+    self.tipLabel.textAlignment = NSTextAlignmentCenter;
+    self.tipLabel.font = [UIFont systemFontOfSize:12.f];
+    self.tipLabel.numberOfLines = 0;
+    self.tipLabel.text = @"照片将以2种尺寸呈现，请老师们在调整时，确保实线正方形和虚线长方形区域内都能适当展示您的风采";
+    [self.tipView addSubview:self.tipLabel];
+    [self addSubview:self.tipView];
     
     // The pan controller to recognize gestures meant to resize the grid view
     self.gridPanGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(gridPanGestureRecognized:)];
@@ -1013,7 +1032,7 @@ typedef NS_ENUM(NSInteger, TOCropViewOverlayEdge) {
     
     self.foregroundContainerView.frame = _cropBoxFrame; //set the clipping view to match the new rect
     self.gridOverlayView.frame = _cropBoxFrame; //set the new overlay view to match the same region
-    
+    self.tipView.frame = (CGRect){0.f, CGRectGetMaxY(self.gridOverlayView.frame) + 30.f, self.bounds.size.width, 34.f};
     // If the mask layer is present, adjust its transform to fit the new container view size
     if (self.circularMaskLayer) {
         CGFloat scale = _cropBoxFrame.size.width / kTOCropViewCircularPathRadius;
@@ -1752,3 +1771,4 @@ typedef NS_ENUM(NSInteger, TOCropViewOverlayEdge) {
 }
 
 @end
+

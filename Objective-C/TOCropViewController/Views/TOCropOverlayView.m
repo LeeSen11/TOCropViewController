@@ -36,6 +36,10 @@ static const CGFloat kTOCropOverLayerCornerWidth = 20.0f;
 @property (nonatomic, strong) NSArray *bottomRightLineViews;
 @property (nonatomic, strong) NSArray *topRightLineViews;
 
+/// 根据项目需要，去掉项目中原本的九宫格线，换成虚线
+@property (nonatomic, strong) CAShapeLayer *leftLine;
+@property (nonatomic, strong) CAShapeLayer *rightLine;
+
 @end
 
 @implementation TOCropOverlayView
@@ -48,6 +52,42 @@ static const CGFloat kTOCropOverLayerCornerWidth = 20.0f;
     }
     
     return self;
+}
+
+- (CAShapeLayer *)leftLine {
+    if (!_leftLine) {
+        _leftLine = [CAShapeLayer new];
+        _leftLine.frame = (CGRect){42.0f,0.0f,1.0f,[UIScreen mainScreen].bounds.size.width - 40.0f};
+        _leftLine.fillColor = [UIColor clearColor].CGColor;
+        _leftLine.strokeColor = [UIColor whiteColor].CGColor;
+        _leftLine.lineWidth = 1.0f;
+        _leftLine.lineDashPattern = @[@10.0f, @2.0f];
+        CGMutablePathRef path = CGPathCreateMutable();
+        CGPathMoveToPoint(path, NULL, 0.0f, 0.0f);
+        CGPathAddLineToPoint(path, NULL, 0.0f, CGRectGetHeight(_leftLine.frame));
+        [_leftLine setPath:path];
+        CGPathRelease(path);
+    }
+    
+    return _leftLine;
+}
+
+- (CAShapeLayer *)rightLine {
+    if (!_rightLine) {
+        _rightLine = [CAShapeLayer new];
+        _rightLine.frame = (CGRect){[UIScreen mainScreen].bounds.size.width - 83.0f,0.0f,1.0f,[UIScreen mainScreen].bounds.size.width - 40.0f};
+        _rightLine.fillColor = [UIColor clearColor].CGColor;
+        _rightLine.strokeColor = [UIColor whiteColor].CGColor;
+        _rightLine.lineWidth = 1.0f;
+        _rightLine.lineDashPattern = @[@10.0f, @2.0f];
+        CGMutablePathRef path = CGPathCreateMutable();
+        CGPathMoveToPoint(path, NULL, 0.0f, 0.0f);
+        CGPathAddLineToPoint(path, NULL, 0.0f, CGRectGetHeight(_rightLine.frame));
+        [_rightLine setPath:path];
+        CGPathRelease(path);
+    }
+    
+    return _rightLine;
 }
 
 - (void)setup
@@ -65,6 +105,9 @@ static const CGFloat kTOCropOverLayerCornerWidth = 20.0f;
     
     self.displayHorizontalGridLines = YES;
     self.displayVerticalGridLines = YES;
+    
+    [self.layer addSublayer:self.leftLine];
+    [self.layer addSublayer:self.rightLine];
 }
 
 - (void)setFrame:(CGRect)frame
@@ -131,30 +174,30 @@ static const CGFloat kTOCropOverLayerCornerWidth = 20.0f;
         [cornerLine[1] setFrame:horizontalFrame];
     }
     
-    //grid lines - horizontal
-    CGFloat thickness = 1.0f / [[UIScreen mainScreen] scale];
-    NSInteger numberOfLines = self.horizontalGridLines.count;
-    CGFloat padding = (CGRectGetHeight(self.bounds) - (thickness*numberOfLines)) / (numberOfLines + 1);
-    for (NSInteger i = 0; i < numberOfLines; i++) {
-        UIView *lineView = self.horizontalGridLines[i];
-        CGRect frame = CGRectZero;
-        frame.size.height = thickness;
-        frame.size.width = CGRectGetWidth(self.bounds);
-        frame.origin.y = (padding * (i+1)) + (thickness * i);
-        lineView.frame = frame;
-    }
-    
-    //grid lines - vertical
-    numberOfLines = self.verticalGridLines.count;
-    padding = (CGRectGetWidth(self.bounds) - (thickness*numberOfLines)) / (numberOfLines + 1);
-    for (NSInteger i = 0; i < numberOfLines; i++) {
-        UIView *lineView = self.verticalGridLines[i];
-        CGRect frame = CGRectZero;
-        frame.size.width = thickness;
-        frame.size.height = CGRectGetHeight(self.bounds);
-        frame.origin.x = (padding * (i+1)) + (thickness * i);
-        lineView.frame = frame;
-    }
+//    //grid lines - horizontal
+//    CGFloat thickness = 1.0f / [[UIScreen mainScreen] scale];
+//    NSInteger numberOfLines = self.horizontalGridLines.count;
+//    CGFloat padding = (CGRectGetHeight(self.bounds) - (thickness*numberOfLines)) / (numberOfLines + 1);
+//    for (NSInteger i = 0; i < numberOfLines; i++) {
+//        UIView *lineView = self.horizontalGridLines[i];
+//        CGRect frame = CGRectZero;
+//        frame.size.height = thickness;
+//        frame.size.width = CGRectGetWidth(self.bounds);
+//        frame.origin.y = (padding * (i+1)) + (thickness * i);
+//        lineView.frame = frame;
+//    }
+//
+//    //grid lines - vertical
+//    numberOfLines = self.verticalGridLines.count;
+//    padding = (CGRectGetWidth(self.bounds) - (thickness*numberOfLines)) / (numberOfLines + 1);
+//    for (NSInteger i = 0; i < numberOfLines; i++) {
+//        UIView *lineView = self.verticalGridLines[i];
+//        CGRect frame = CGRectZero;
+//        frame.size.width = thickness;
+//        frame.size.height = CGRectGetHeight(self.bounds);
+//        frame.origin.x = (padding * (i+1)) + (thickness * i);
+//        lineView.frame = frame;
+//    }
 }
 
 - (void)setGridHidden:(BOOL)hidden animated:(BOOL)animated
@@ -162,24 +205,30 @@ static const CGFloat kTOCropOverLayerCornerWidth = 20.0f;
     _gridHidden = hidden;
     
     if (animated == NO) {
-        for (UIView *lineView in self.horizontalGridLines) {
-            lineView.alpha = hidden ? 0.0f : 1.0f;
-        }
-        
-        for (UIView *lineView in self.verticalGridLines) {
-            lineView.alpha = hidden ? 0.0f : 1.0f;
-        }
-    
+        self.leftLine.hidden = !hidden;
+        self.rightLine.hidden = !hidden;
         return;
     }
     
-    [UIView animateWithDuration:hidden?0.35f:0.2f animations:^{
-        for (UIView *lineView in self.horizontalGridLines)
-            lineView.alpha = hidden ? 0.0f : 1.0f;
-        
-        for (UIView *lineView in self.verticalGridLines)
-            lineView.alpha = hidden ? 0.0f : 1.0f;
-    }];
+//    if (animated == NO) {
+//        for (UIView *lineView in self.horizontalGridLines) {
+//            lineView.alpha = hidden ? 0.0f : 1.0f;
+//        }
+//
+//        for (UIView *lineView in self.verticalGridLines) {
+//            lineView.alpha = hidden ? 0.0f : 1.0f;
+//        }
+//
+//        return;
+//    }
+//
+//    [UIView animateWithDuration:hidden?0.35f:0.2f animations:^{
+//        for (UIView *lineView in self.horizontalGridLines)
+//            lineView.alpha = hidden ? 0.0f : 1.0f;
+//
+//        for (UIView *lineView in self.verticalGridLines)
+//            lineView.alpha = hidden ? 0.0f : 1.0f;
+//    }];
 }
 
 #pragma mark - Property methods

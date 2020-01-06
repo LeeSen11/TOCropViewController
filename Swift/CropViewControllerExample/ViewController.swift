@@ -40,10 +40,16 @@ class ViewController: UIViewController, CropViewControllerDelegate, UIImagePicke
     
         // -- Uncomment this line of code to place the toolbar at the top of the view controller --
         //cropController.toolbarPosition = .top
-    
-        //cropController.rotateButtonsHidden = true
-        //cropController.rotateClockwiseButtonHidden = true
-    
+        
+        cropController.rotateButtonsHidden = true
+        cropController.rotateClockwiseButtonHidden = true
+        cropController.resetButtonHidden = true
+        cropController.aspectRatioPickerButtonHidden = true
+        cropController.aspectRatioLockEnabled = true
+        cropController.customAspectRatio = CGSize(width: 1.0, height: 1.0)
+        cropController.cropView.cropViewPadding = 20.0
+        cropController.cropView.cropBoxResizeEnabled = false
+        
         //cropController.doneButtonTitle = "Title"
         //cropController.cancelButtonTitle = "Title"
         

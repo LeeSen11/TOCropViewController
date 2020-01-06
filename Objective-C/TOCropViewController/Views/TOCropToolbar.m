@@ -77,7 +77,7 @@
 																  resourceBundle,
                                                                   nil)
                      forState:UIControlStateNormal];
-    [_doneTextButton setTitleColor:[UIColor colorWithRed:1.0f green:0.8f blue:0.0f alpha:1.0f] forState:UIControlStateNormal];
+    [_doneTextButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [_doneTextButton.titleLabel setFont:[UIFont systemFontOfSize:17.0f]];
     [_doneTextButton addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
     [_doneTextButton sizeToFit];
@@ -97,6 +97,7 @@
 																	resourceBundle,
                                                                     nil)
                        forState:UIControlStateNormal];
+    [_cancelTextButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [_cancelTextButton.titleLabel setFont:[UIFont systemFontOfSize:17.0f]];
     [_cancelTextButton addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
     [_cancelTextButton sizeToFit];
@@ -169,11 +170,11 @@
 #endif
     
     if (verticalLayout == NO) {
-        CGFloat insetPadding = 10.0f;
+        CGFloat insetPadding = 20.0f;
         
         // Work out the cancel button frame
         CGRect frame = CGRectZero;
-        frame.size.height = 44.0f;
+        frame.size.height = 56.0f;
         frame.size.width = MIN(self.frame.size.width / 3.0, self.cancelTextButton.frame.size.width);
 
         //If normal layout, place on the left side, else place on the right
