@@ -247,11 +247,11 @@ typedef NS_ENUM(NSInteger, TOCropViewOverlayEdge) {
     
     self.tipView = [[UIView alloc] initWithFrame:CGRectZero];
     
-    self.tipImageView = [[UIImageView alloc] initWithFrame:(CGRect){7.f, 2.f, 14.0f, 14.0f}];
+    self.tipImageView = [[UIImageView alloc] initWithFrame:(CGRect){26.f, 2.f, 14.0f, 14.0f}];
     self.tipImageView.image = [UIImage imageNamed:@"photo_select_tip_14x14"];
     [self.tipView addSubview:self.tipImageView];
     
-    self.tipLabel = [[UILabel alloc] initWithFrame:(CGRect){20.0f, 0.0, [UIScreen mainScreen].bounds.size.width - 40.0f, 34.0}];
+    self.tipLabel = [[UILabel alloc] initWithFrame:(CGRect){40.0f, 0.0, [UIScreen mainScreen].bounds.size.width - 80.0f, 34.0}];
     self.tipLabel.textColor = [UIColor colorWithRed:234.f green:244.f blue:255.f alpha: 1.0];
     self.tipLabel.textAlignment = NSTextAlignmentCenter;
     self.tipLabel.font = [UIFont systemFontOfSize:12.f];
@@ -1291,7 +1291,7 @@ typedef NS_ENUM(NSInteger, TOCropViewOverlayEdge) {
     }
     
     CGFloat duration = editing ? 0.05f : 0.35f;
-    CGFloat delay = editing? 0.0f : 0.35f;
+    CGFloat delay = editing? 0.0f : 0.05f;
     
     if (self.croppingStyle == TOCropViewCroppingStyleCircular) {
         delay = 0.0f;
